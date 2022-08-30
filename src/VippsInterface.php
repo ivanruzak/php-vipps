@@ -9,6 +9,8 @@
 namespace zaporylie\Vipps;
 
 use zaporylie\Vipps\Api\CheckoutInterface;
+use zaporylie\Vipps\Api\EPayment;
+use zaporylie\Vipps\Api\EPaymentInterface;
 
 /**
  * Interface VippsInterface
@@ -53,4 +55,12 @@ interface VippsInterface
      * @return \zaporylie\Vipps\Api\CheckoutInterface
      */
     public function checkout(string $subscription_key): CheckoutInterface;
+
+  /**
+     * @param string $subscription_key
+     *   The subscription key.
+     *
+     * @return \zaporylie\Vipps\Api\EPaymentInterface
+     */
+    public function ePayment(string $subscription_key): EPaymentInterface;
 }
