@@ -2,6 +2,7 @@
 
 namespace zaporylie\Vipps\Api;
 
+use zaporylie\Vipps\Exceptions\Api\InvalidArgumentException;
 use zaporylie\Vipps\Model\Checkout\Logistics;
 use zaporylie\Vipps\Model\Checkout\MerchantInfo;
 use zaporylie\Vipps\Model\Checkout\PaymentTransaction;
@@ -15,6 +16,7 @@ use zaporylie\Vipps\Model\Checkout\ResponseInitiateSession;
 use zaporylie\Vipps\Resource\Checkout\CancelSession;
 use zaporylie\Vipps\Resource\Checkout\GetSessionDetails;
 use zaporylie\Vipps\Resource\Checkout\InitiateSession;
+use zaporylie\Vipps\VippsInterface;
 
 /**
  * Class Checkout.
@@ -24,17 +26,41 @@ use zaporylie\Vipps\Resource\Checkout\InitiateSession;
 class Checkout extends ApiBase implements CheckoutInterface {
 
     /**
+     * @var string
+     */
+    protected $clientSecret;
+
+    /**
+     * Gets client secret.
+     *
+     * @return string
+     */
+    public function getClientSecret(): string
+    {
+        if (!$this->clientSecret) {
+            throw new InvalidArgumentException('Missing client secret');
+        }
+        return $this->clientSecret;
+    }
+
+    /**
+     * Checkout constructor.
+     */
+    public function __construct(VippsInterface $app, string $subscription_key, string $client_secret)
+    {
+        parent::__construct($app, $subscription_key);
+        $this->clientSecret = $client_secret;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function initiateSession(
-      string $client_secret,
       string $callback_prefix,
       string $return_url,
       string $callback_auth_token,
       RequestAmount $amount,
-      array $options = [],
-      bool $contact_fields = TRUE,
-      bool $address_fields = TRUE
+      array $options = []
     ): ResponseInitiateSession
     {
         $request = (new RequestInitiateSession())
@@ -49,11 +75,14 @@ class Checkout extends ApiBase implements CheckoutInterface {
                     ->setAmount($amount)
             )
             ->setLogistics(new Logistics())
-            ->setPrefillCustomer(new PrefillCustomer())
-            ->setContactFields($contact_fields)
-            ->setAddressFields($address_fields);
+            ->setPrefillCustomer(new PrefillCustomer());
 
         // Set other options.
+        $default_options = [
+          'contactFields' => TRUE,
+          'addressFields' => TRUE,
+        ];
+        $options += $default_options;
         foreach ($options as $option => $value) {
             switch ($option) {
                 case 'termsAndConditionsUrl':
@@ -102,6 +131,14 @@ class Checkout extends ApiBase implements CheckoutInterface {
                 case 'customerInteraction':
                     $request->setCustomerInteraction($value);
                     break;
+                // Contact fields.
+                case 'contactFields':
+                    $request->setContactFields($value);
+                    break;
+                // Address fields.
+                case 'addressFields':
+                    $request->setAddressFields($value);
+                    break;
                 // User flow.
                 case 'userFlow':
                     $request->setUserFlow($value);
@@ -112,7 +149,7 @@ class Checkout extends ApiBase implements CheckoutInterface {
         $resource = new InitiateSession(
             $this->app,
             $this->getSubscriptionKey(),
-            $client_secret,
+            $this->getClientSecret(),
             $request
         );
         $resource->setPath($resource->getPath());
@@ -123,12 +160,12 @@ class Checkout extends ApiBase implements CheckoutInterface {
     /**
      * {@inheritdoc}
      */
-    public function getSessionDetails(string $client_secret, string $session_id): ResponseGetSessionDetails
+    public function getSessionDetails(string $session_id): ResponseGetSessionDetails
     {
         $resource = new GetSessionDetails(
             $this->app,
             $this->getSubscriptionKey(),
-            $client_secret,
+            $this->getClientSecret(),
             $session_id
         );
         $resource->setPath($resource->getPath());
@@ -138,12 +175,12 @@ class Checkout extends ApiBase implements CheckoutInterface {
     /**
      * {@inheritdoc}
      */
-    public function cancelSession(string $client_secret, string $session_id): ResponseCancelSession {
+    public function cancelSession(string $session_id): ResponseCancelSession {
         $request = (new RequestCancelSession())->setSessionId($session_id);
         $resource = new CancelSession(
             $this->app,
             $this->getSubscriptionKey(),
-            $client_secret,
+            $this->getClientSecret(),
             $request
         );
         $resource->setPath($resource->getPath());

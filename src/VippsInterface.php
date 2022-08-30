@@ -48,15 +48,17 @@ interface VippsInterface
      */
     public function recurringPayment($subscription_key, $merchant_serial_number);
 
-  /**
+    /**
      * @param string $subscription_key
      *   The subscription key.
+     * @param string $client_secret
+     *   The client secret.
      *
      * @return \zaporylie\Vipps\Api\CheckoutInterface
      */
-    public function checkout(string $subscription_key): CheckoutInterface;
+    public function checkout(string $subscription_key, string $client_secret): CheckoutInterface;
 
-  /**
+    /**
      * @param string $subscription_key
      *   The subscription key.
      *
