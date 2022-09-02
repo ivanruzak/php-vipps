@@ -22,9 +22,9 @@ class GetPayment extends EPaymentResourceBase
     /**
      * GetPayment constructor.
      */
-    public function __construct(VippsInterface $vipps, string $subscription_key, string $idempotency_key, string $reference)
+    public function __construct(VippsInterface $vipps, string $subscription_key, string $reference)
     {
-        parent::__construct($vipps, $subscription_key, $idempotency_key);
+        parent::__construct($vipps, $subscription_key);
         $this->id = $reference;
     }
 

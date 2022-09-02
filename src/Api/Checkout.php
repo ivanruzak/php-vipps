@@ -156,7 +156,6 @@ class Checkout extends ApiBase implements CheckoutInterface
         return $resource->call();
     }
 
-
     /**
      * {@inheritdoc}
      */
