@@ -5,7 +5,7 @@ namespace zaporylie\Vipps\Model\EPayment;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * Class RequestCapturePayment
+ * Class RequestCapturePayment.
  *
  * @package Vipps\Model\EPayment
  */
