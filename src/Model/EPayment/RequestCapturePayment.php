@@ -9,19 +9,13 @@ use JMS\Serializer\Annotation as Serializer;
  *
  * @package Vipps\Model\EPayment
  */
-class RequestCapturePayment
+class RequestCapturePayment extends RequestCancelPayment
 {
     /**
      * @var \zaporylie\Vipps\Model\EPayment\Amount
      * @Serializer\Type("zaporylie\Vipps\Model\EPayment\Amount")
      */
     protected $modificationAmount;
-
-    /**
-     * @var string
-     * @Serializer\Type("string")
-     */
-    protected $modificationReference;
 
     /**
      * Gets modification amount.
@@ -41,33 +35,9 @@ class RequestCapturePayment
      *
      * @return $this
      */
-    public function setModificationAmount(Amount $amount): RequestCapturePayment
+    public function setModificationAmount(Amount $amount)
     {
         $this->modificationAmount = $amount;
-        return $this;
-    }
-
-    /**
-     * Gets modification reference.
-     *
-     * @return string
-     */
-    public function getModificationReference(): string
-    {
-        return $this->modificationReference;
-    }
-
-    /**
-     * Sets modification reference.
-     *
-     * @param string $reference
-     *   Modification reference.
-     *
-     * @return $this
-     */
-    public function setModificationReference(string $reference): RequestCapturePayment
-    {
-        $this->modificationReference = $reference;
         return $this;
     }
 }

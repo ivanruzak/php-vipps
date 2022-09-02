@@ -3,11 +3,11 @@
 namespace zaporylie\Vipps\Model\EPayment;
 
 /**
- * Class ResponseCapturePayment.
+ * Class AdjustPaymentResponse.
  *
  * @package Vipps\Model\EPayment
  */
-class ResponseCapturePayment
+class AdjustPaymentResponse
 {
 
 }
